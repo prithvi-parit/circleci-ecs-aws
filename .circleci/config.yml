@@ -14,6 +14,10 @@ jobs:
           command: ls
       - run:
           command: docker build -t fasal-repo .
+      - run:
+          command: docker tag fasal-repo:latest 363833884943.dkr.ecr.ap-south-1.amazonaws.com/fasal-repo:latest
+      - run:
+          command: docker push 363833884943.dkr.ecr.ap-south-1.amazonaws.com/fasal-repo:latest
       - docker/build:
           image: my_repo/orb-test
       - docker/push:
