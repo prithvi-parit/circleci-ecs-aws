@@ -34,4 +34,6 @@ workflows:
   commit:
     jobs:
       - build-and-push
-      - deploy
+      - deploy:
+          requires:
+            - build-and-push
