@@ -1,0 +1,51 @@
+references:
+  container_config: &container_config
+    #working_directory: /var/www/html
+    docker:
+      - image: prithvi18/circleci-staticweb:v1
+        auth:
+          username: prithvi18  # can specify string literal values
+          password: Prithvitoppi@007
+
+
+
+version: '2.1'
+orbs:
+  docker: circleci/docker@2.0.1
+  aws-cli: circleci/aws-cli@1.2.1
+  
+jobs:
+  build-and-push:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      #- docker/check
+      - run:
+          name: "login to repo"
+          command: echo ${MY_PASS} | docker login --username AWS --password-stdin 363833884943.dkr.ecr.ap-south-1.amazonaws.com
+      
+      - run:
+          name: "docker build"
+          command: docker build -t fasal-repo .
+      - run:
+          name: "docker tag"
+          command: docker tag fasal-repo:latest 363833884943.dkr.ecr.ap-south-1.amazonaws.com/fasal-repo:latest
+      - run:
+          name: "docker push"
+          command: docker push 363833884943.dkr.ecr.ap-south-1.amazonaws.com/fasal-repo:latest
+      
+  deploy:
+    <<: *container_config
+    executor: aws-cli/default
+    steps:
+      - run:
+          command: aws ecs update-service --cluster my-server-fargate  --service my-service-fargate  --force-new-deployment --region ap-south-1
+
+workflows:
+  commit:
+    jobs:
+      - build-and-push
+      - deploy:
+          requires:
+            - build-and-push
