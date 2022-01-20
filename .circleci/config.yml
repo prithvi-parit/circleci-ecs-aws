@@ -7,9 +7,9 @@ jobs:
     steps:
       - setup_remote_docker
       - checkout
-      - docker/check
+      #- docker/check
       - run:
-          command: echo ${}
+          command: echo ${MY_PASS}
       - docker/build:
           image: my_repo/orb-test
       - docker/push:
