@@ -12,6 +12,8 @@ jobs:
           command: echo ${MY_PASS} | docker login --username AWS --password-stdin 363833884943.dkr.ecr.ap-south-1.amazonaws.com
       - run:
           command: ls
+      - run:
+          command: docker build -t fasal-repo .
       - docker/build:
           image: my_repo/orb-test
       - docker/push:
