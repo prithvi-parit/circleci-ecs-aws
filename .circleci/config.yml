@@ -9,23 +9,19 @@ jobs:
       - checkout
       #- docker/check
       - run:
+          name: "login to repo"
           command: echo ${MY_PASS} | docker login --username AWS --password-stdin 363833884943.dkr.ecr.ap-south-1.amazonaws.com
+      
       - run:
-          command: ls
-      - run:
+          name: "docker build"
           command: docker build -t fasal-repo .
       - run:
+          name: "docker tag"
           command: docker tag fasal-repo:latest 363833884943.dkr.ecr.ap-south-1.amazonaws.com/fasal-repo:latest
       - run:
+          name: "docker push"
           command: docker push 363833884943.dkr.ecr.ap-south-1.amazonaws.com/fasal-repo:latest
-      - docker/build:
-          image: my_repo/orb-test
-      - docker/push:
-          digest-path: /tmp/digest.txt
-          image: my_repo/orb-test
-      - run:
-          command: |
-            echo "Digest is: $(</tmp/digest.txt)"
+      
 workflows:
   commit:
     jobs:
