@@ -1,6 +1,7 @@
 version: '2.1'
 orbs:
   docker: circleci/docker@2.0.1
+  aws-cli: circleci/aws-cli@1.2.1
 jobs:
   build-and-push:
     executor: docker/docker
@@ -22,6 +23,13 @@ jobs:
           name: "docker push"
           command: docker push 363833884943.dkr.ecr.ap-south-1.amazonaws.com/fasal-repo:latest
       
+  deploy:
+    #<<: *container_config
+    executor: aws-cli/default
+    steps:
+      - run:
+          command: aws ecs update-service --cluster my-server-fargate  --service my-service-fargate  --force-new-deployment --region ap-south-1
+
 workflows:
   commit:
     jobs:
